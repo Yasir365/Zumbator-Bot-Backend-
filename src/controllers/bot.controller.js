@@ -9,7 +9,7 @@ export const register = async (req, res) => {
 
     try {
         const data = await user.save();
-        res.status(200).send({ success: true , data: data });
+        res.status(200).send({ success: true, data: data });
     } catch (error) {
         res.status(500).send({ success: false, message: error.message });
     }
@@ -42,15 +42,24 @@ export const saveRefUser = async (req, res) => {
 }
 
 export const getInvitedFriends = async (req, res) => {
-    const { user_id } = req.body._id;
+    const user_id = req.body._id;
+
     try {
-        const user = await User.findById(user_id);
-        let match = {
-            _id: { $in: user.invited_friends }
+        const user = await User.findById(user_id).select('invited_friends');
+
+        if (!user) {
+            return res.status(404).send({ success: false, message: 'User not found' });
         }
 
-        const users = await User.find(match);
-        res.status(200).send({ success: true, data: users });
+        if (!user.invited_friends || user.invited_friends.length === 0) {
+            return res.status(200).send({ success: true, data: [], message: 'No invited friends found' });
+        }
+
+        const invitedUsers = await User.find({
+            _id: { $in: user.invited_friends }
+        });
+
+        res.status(200).send({ success: true, data: invitedUsers });
     } catch (error) {
         res.status(500).send({ success: false, message: error.message });
     }
