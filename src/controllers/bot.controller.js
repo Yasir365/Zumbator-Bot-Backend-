@@ -8,8 +8,8 @@ export const register = async (req, res) => {
     const user = new User(req.body);
 
     try {
-        await user.save();
-        res.status(200).send({ success: true });
+        const data = await user.save();
+        res.status(200).send({ success: true , data: data });
     } catch (error) {
         res.status(500).send({ success: false, message: error.message });
     }
