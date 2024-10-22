@@ -23,13 +23,13 @@ export const saveRefUser = async (req, res) => {
         const existingUser = await User.findOne({ telegram_id: ref });
         let result = {}
         if (newUser && existingUser) {
-            if(!newUser.referral_id){
+            if (!newUser.referral_id) {
                 newUser.referral_id = existingUser.telegram_id;
                 const updatedNewUser = await newUser.save();
             }
 
             const index = existingUser.invited_friends.findIndex((id) => id == newUser._id);
-            if(index != -1){
+            if (index != -1) {
                 existingUser.invited_friends = [...existingUser.invited_friends, newUser._id];
                 result = await existingUser.save();
             }
@@ -41,3 +41,17 @@ export const saveRefUser = async (req, res) => {
     }
 }
 
+export const getInvitedFriends = async (req, res) => {
+    const { user_id } = req.body._id;
+    try {
+        const user = await User.findById(user_id);
+        let match = {
+            _id: { $in: user.invited_friends }
+        }
+
+        const users = await User.find(match);
+        res.status(200).send({ success: true, data: users });
+    } catch (error) {
+        res.status(500).send({ success: false, message: error.message });
+    }
+}
