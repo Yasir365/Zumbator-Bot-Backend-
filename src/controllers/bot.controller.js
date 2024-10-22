@@ -8,6 +8,12 @@ export const register = async (req, res) => {
     const user = new User(req.body);
 
     try {
+        const existingUser = await User.findOne({ telegram_id: user.telegram_id });
+
+        if (existingUser) {
+            res.status(400).send({ success: false, message: 'User already exists' });
+            return;
+        }
         const data = await user.save();
         res.status(200).send({ success: true, data: data });
     } catch (error) {
