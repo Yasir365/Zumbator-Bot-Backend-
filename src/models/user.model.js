@@ -10,15 +10,20 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     telegram_id: {
-        type: String,
+        type: Number,
         required: true
     },
-    referral:{
-        type: String,
+    referral_id:{
+        type: Number,
         default: null
     },
     invited_friends:{
-        type: Number,
+        type: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'users'
+            }
+        ],
         default: []
     },
 }, {
