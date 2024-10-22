@@ -29,10 +29,10 @@ export const saveRefUser = async (req, res) => {
             }
 
             const index = existingUser.invited_friends.findIndex((id) => id == newUser._id);
-            // if(index != -1){
+            if(index != -1){
                 existingUser.invited_friends = [...existingUser.invited_friends, newUser._id];
                 result = await existingUser.save();
-            // }
+            }
         }
 
         res.status(200).send({ success: true, data: result });
