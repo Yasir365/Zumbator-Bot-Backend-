@@ -13,15 +13,15 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    referral_id:{
+    referral_id: {
         type: Number,
         default: null
     },
-    invited_friends:{
+    invited_friends: {
         type: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'users'
+                ref: 'zumator_users'
             }
         ],
         default: []
@@ -30,6 +30,6 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const User = mongoose.model('users', userSchema);
+const User = mongoose.model('zumator_users', userSchema);
 
 export default User;
