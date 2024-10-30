@@ -8,7 +8,7 @@ export const register = async (req, res) => {
     const user = new User(req.body);
 
     try {
-        const existingUser = await User.findOne({ telegram_id: user.telegram_id });
+        const existingUser = await User.findOne({ id: req.body.user.id });
 
         if (existingUser) {
             res.status(200).send({ success: true, data: existingUser });
@@ -17,7 +17,7 @@ export const register = async (req, res) => {
         const data = await user.save();
         res.status(200).send({ success: true, data: data });
     } catch (error) {
-        res.status(500).send({ success: false, message: error.message });
+        res.status(400).send({ success: false, message: error.message });
     }
 }
 
