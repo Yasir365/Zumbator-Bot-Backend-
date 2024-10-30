@@ -53,10 +53,31 @@ const userSchema = new mongoose.Schema({
         ],
         default: []
     },
-    points:{
+    points: {
         type: Number,
         default: 0
+    },
+    keys: {
+        type: Number,
+        default: 0
+    },
+    diamonds: {
+        type: Number,
+        default: 0
+    },
+    game_pass: {
+        type: Number,
+        default: 0
+    },
+    game_pass_last_purchase: {
+        type: Date,
+        default: null
+    },
+    user_level: {
+        type: Number,
+        default: 1
     }
+
 }, {
     timestamps: true
 });
