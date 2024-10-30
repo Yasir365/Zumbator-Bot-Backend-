@@ -8,14 +8,14 @@ export const register = async (req, res) => {
     const user = new User(req.body);
 
     try {
-        const existingUser = await User.findOne({ id: req.body.user.id });
+        const existingUser = await User.findOne({ 'user.id': req.body.user.id });
 
         if (existingUser) {
-            res.status(200).send({ success: true, data: existingUser });
+            res.status(200).send({ success: true, data: existingUser, message: 'User already exists' });
             return;
         }
         const data = await user.save();
-        res.status(200).send({ success: true, data: data });
+        res.status(200).send({ success: true, data: data, message: 'New user created' });
     } catch (error) {
         res.status(400).send({ success: false, message: error.message });
     }
