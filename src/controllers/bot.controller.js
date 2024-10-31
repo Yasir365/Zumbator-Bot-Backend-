@@ -27,28 +27,36 @@ export const saveReferal = async (req, res) => {
     try {
         const newUser = await User.findOneAndUpdate({ 'user.id': user.user.id });
         const existingUser = await User.findOne({ 'user.id': user.referral_id });
-        let result = {}
+
+        if (!newUser) {
+            return res.status(200).send({ success: false, message: 'User not found' });
+        }
+
         if (newUser && existingUser) {
             if (!newUser.referral_id) {
+                // Set referral_id for the newUser
                 newUser.referral_id = user.referral_id;
                 const updatedNewUser = await newUser.save();
-                result = updatedNewUser;
 
-                const index = existingUser.invited_friends.findIndex((id) => id == newUser._id);
-                if (index != -1) {
-                    existingUser.invited_friends = [...existingUser.invited_friends, newUser._id];
+                // Add newUser to existingUser's invited_friends list if not already there
+                const index = existingUser.invited_friends.findIndex((id) => id === user._id);
+                if (index === -1) {
+                    existingUser.invited_friends.push(user._id);
                     await existingUser.save();
                 }
-                res.status(200).send({ success: true, data: result });
+
+                return res.status(200).send({ success: true, data: updatedNewUser });
             }
-            res.status(200).send({ success: false, message: 'User already refered' });
+            return res.status(200).send({ success: false, message: 'User already referred' });
         }
-        res.status(200).send({ success: false, message: 'User not found' });
+
+        return res.status(200).send({ success: false, message: 'Referral user not found' });
 
     } catch (error) {
         res.status(500).send({ success: false, message: error.message });
     }
-}
+};
+
 
 export const getReferal = async (req, res) => {
     const user = req.body;
@@ -67,23 +75,30 @@ export const getReferal = async (req, res) => {
 }
 
 export const getInvitedFriends = async (req, res) => {
-    const user_id = req.body._id;
+    const { _id: userId } = req.body;
 
     try {
-        const user = await User.findById(user_id).select('invited_friends');
+        // Fetch user with only invited_friends field
+        const user = await User.findById(userId).select('invited_friends');
 
         if (!user) {
             return res.status(404).send({ success: false, message: 'User not found' });
         }
 
-        if (!user.invited_friends || user.invited_friends.length === 0) {
+        console.log(user);
+
+
+        // If invited_friends list is empty, return an empty data response
+        if (user.invited_friends.length === 0) {
             return res.status(200).send({ success: true, data: [], message: 'No invited friends found' });
         }
 
-        const invitedUsers = await User.find({ _id: { $in: user.invited_friends } });
+        // Fetch all users with IDs in the invited_friends array
+        const invitedUsers = await User.find({ _id: { $in: user.invited_friends } }).select('-__v');
 
-        res.status(200).send({ success: true, data: invitedUsers });
+        return res.status(200).send({ success: true, data: invitedUsers });
     } catch (error) {
-        res.status(500).send({ success: false, message: error.message });
+        console.error('Error fetching invited friends:', error);
+        return res.status(500).send({ success: false, message: 'Server error' });
     }
-}
+};
