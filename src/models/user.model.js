@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     auth_date: {
         type: String,
-        required: true
+        default: ''
     },
     chat_instance: {
         type: String,
-        required: true
+        default: ''
     },
     chat_type: {
         type: String,
@@ -15,13 +15,13 @@ const userSchema = new mongoose.Schema({
     },
     hash: {
         type: String,
-        required: true
+        default: ''
     },
 
     user: {
         allows_write_to_pm: {
             type: Boolean,
-            required: true
+            default: false
         },
         id: {
             type: Number,
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
         },
         language_code: {
             type: String,
-            required: true
+            default: ''
         }
     },
     referral_id: {
@@ -47,8 +47,7 @@ const userSchema = new mongoose.Schema({
     invited_friends: {
         type: [
             {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'zumator_users'
+                type: String,
             }
         ],
         default: []
