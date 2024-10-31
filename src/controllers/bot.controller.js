@@ -29,20 +29,21 @@ export const saveReferal = async (req, res) => {
         const existingUser = await User.findOne({ 'user.id': user.referral_id });
         let result = {}
         if (newUser && existingUser) {
-            if (!newUser.referral_id) {
+            if (newUser.referral_id != null) {
                 newUser.referral_id = user.referral_id;
                 const updatedNewUser = await newUser.save();
                 result = updatedNewUser;
-            }
 
-            const index = existingUser.invited_friends.findIndex((id) => id == newUser._id);
-            if (index != -1) {
-                existingUser.invited_friends = [...existingUser.invited_friends, newUser._id];
-                await existingUser.save();
+                const index = existingUser.invited_friends.findIndex((id) => id == newUser._id);
+                if (index != -1) {
+                    existingUser.invited_friends = [...existingUser.invited_friends, newUser._id];
+                    await existingUser.save();
+                }
+                res.status(200).send({ success: true, data: result });
             }
         }
+        res.status(200).send({ success: false, message: 'User Already Refered' });
 
-        res.status(200).send({ success: true, data: result });
     } catch (error) {
         res.status(500).send({ success: false, message: error.message });
     }
