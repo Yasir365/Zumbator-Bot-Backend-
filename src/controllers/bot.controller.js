@@ -29,7 +29,7 @@ export const saveReferal = async (req, res) => {
         const existingUser = await User.findOne({ 'user.id': user.referral_id });
         let result = {}
         if (newUser && existingUser) {
-            if (newUser.referral_id != null) {
+            if (!newUser.referral_id) {
                 newUser.referral_id = user.referral_id;
                 const updatedNewUser = await newUser.save();
                 result = updatedNewUser;
