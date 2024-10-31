@@ -41,8 +41,9 @@ export const saveReferal = async (req, res) => {
                 }
                 res.status(200).send({ success: true, data: result });
             }
+            res.status(200).send({ success: false, message: 'User already refered' });
         }
-        res.status(200).send({ success: false, message: 'User Already Refered' });
+        res.status(200).send({ success: false, message: 'User not found' });
 
     } catch (error) {
         res.status(500).send({ success: false, message: error.message });
