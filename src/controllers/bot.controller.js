@@ -105,3 +105,19 @@ export const getInvitedFriends = async (req, res) => {
         return res.status(500).send({ success: false, message: 'Server error' });
     }
 };
+
+
+export const deleteAccount = async (req, res) => {
+    const { userId } = req.body;
+
+    try {
+        const deletedUser = await User.findByIdAndDelete(userId);
+        if (!deletedUser) {
+            return res.status(404).send({ success: false, message: 'User not found' });
+        }
+        return res.status(200).send({ success: true, message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        return res.status(500).send({ success: false, message: 'Server error' });
+    }
+}
