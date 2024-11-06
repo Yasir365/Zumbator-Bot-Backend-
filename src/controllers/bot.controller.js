@@ -6,7 +6,7 @@ import User from '../models/user.model.js';
 
 export const register = async (req, res) => {
     const user = new User(req.body);
-    if(user.start_param){
+    if (user.start_param) {
         delete user.start_param
     }
 
@@ -25,11 +25,11 @@ export const register = async (req, res) => {
 }
 
 export const saveReferal = async (req, res) => {
-    const user = req.body;
+    const { referral_id, user_id } = req.body;
 
     try {
-        const newUser = await User.findOneAndUpdate({ 'user.id': user.user.id });
-        const existingUser = await User.findOne({ 'user.id': user.referral_id });
+        const newUser = await User.findOne({ '_id': user_id });
+        const existingUser = await User.findOne({ 'user.id': referral_id });
 
         if (!newUser) {
             return res.status(200).send({ success: false, message: 'User not found' });
@@ -38,13 +38,13 @@ export const saveReferal = async (req, res) => {
         if (newUser && existingUser) {
             if (!newUser.referral_id) {
                 // Set referral_id for the newUser
-                newUser.referral_id = user.referral_id;
+                newUser.referral_id = referral_id;
                 const updatedNewUser = await newUser.save();
 
                 // Add newUser to existingUser's invited_friends list if not already there
                 const index = existingUser.invited_friends.findIndex((id) => id === user._id);
                 if (index === -1) {
-                    existingUser.invited_friends.push(user._id);
+                    existingUser.invited_friends.push(user_id);
                     await existingUser.save();
                 }
 
