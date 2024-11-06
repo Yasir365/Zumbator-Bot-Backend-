@@ -6,6 +6,9 @@ import User from '../models/user.model.js';
 
 export const register = async (req, res) => {
     const user = new User(req.body);
+    if(user.start_param){
+        delete user.start_param
+    }
 
     try {
         const existingUser = await User.findOne({ 'user.id': req.body.user.id });
