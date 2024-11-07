@@ -60,7 +60,6 @@ export const saveReferal = async (req, res) => {
     }
 };
 
-
 export const getReferal = async (req, res) => {
     const user = req.body;
 
@@ -106,7 +105,6 @@ export const getInvitedFriends = async (req, res) => {
     }
 };
 
-
 export const deleteAccount = async (req, res) => {
     const { userId } = req.body;
 
@@ -121,3 +119,14 @@ export const deleteAccount = async (req, res) => {
         return res.status(500).send({ success: false, message: 'Server error' });
     }
 }
+
+export const updatePoints = async (req, res) => {
+    const { userId, points } = req.body;
+    try {
+        const updatedUser = await User.findByIdAndUpdate(userId, { points }, { new: true });
+        return res.status(200).send({ success: true, data: updatedUser, message: 'Points updated successfully' });
+    } catch (error) {
+        console.error('Error updating points:', error);
+        return res.status(500).send({ success: false, message: 'Server error' });
+    }
+};
