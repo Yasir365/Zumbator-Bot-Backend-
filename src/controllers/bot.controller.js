@@ -123,7 +123,7 @@ export const deleteAccount = async (req, res) => {
 export const updatePoints = async (req, res) => {
     const { _id, points } = req.body;
     try {
-        const updatedUser = await User.findByIdAndUpdate(_id, { points }, { new: true });
+        const updatedUser = await User.findByIdAndUpdate(_id, { $inc: { points: points } }, { new: true });
         if (!updatedUser) {
             return res.status(404).send({ success: false, message: 'User not found' });
         }
